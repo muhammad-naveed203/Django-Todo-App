@@ -8,7 +8,7 @@ class TodoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class TodoitemSerializer(serializers.ModelSerializer):
+class TodoItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = TodoItem
         fields = '__all__'

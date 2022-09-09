@@ -90,8 +90,8 @@ DATABASES = {
 
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'tododb2',
-        'USER': 'naveed2',
+        'NAME': 'mytodo',
+        'USER': 'naveed3',
         'PASSWORD': 'admin',
         'HOST': 'localhost',
         'PORT': '',
