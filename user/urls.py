@@ -10,8 +10,8 @@ from .views import UserAPI
 
 urlpatterns = [
 
-    path('api/token/', TokenObtainPairView.as_view()),
-    path('api/token/refresh/', TokenRefreshView.as_view()),
+    path('api/auth_token/', TokenObtainPairView.as_view()),
+    path('api/refresh_token/', TokenRefreshView.as_view()),
     path('user/', UserAPI.as_view()),
 
 ]

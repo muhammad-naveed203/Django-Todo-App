@@ -42,12 +42,39 @@ class ListDetail(APIView):
         serializer = TodoSerializer(todo)
         return Response(serializer.data)
 
+    def put(self, request, pk):
+        data = dict(request.data)
+        data["user"] = request.user.id
+        user = request.user.id
+        list = self.get_object(pk, user)
+        serializer = TodoSerializer(list, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        user = request.user.id
+        list = self.get_object(pk, user)
+        list.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class TodoPublic(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         pub_todo = TodoList.objects.filter(privacy="public")
+        serializer = TodoSerializer(pub_todo, many=True)
+        return Response(serializer.data)
+
+
+class MyPublic(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        user = request.user.id
+        pub_todo = TodoList.objects.filter(user=user, privacy="public")
         serializer = TodoSerializer(pub_todo, many=True)
         return Response(serializer.data)
 
@@ -96,4 +123,29 @@ class ItemDetail(APIView):
         serializer = TodoItemSerializer(todo)
         return Response(serializer.data)
 
+    def put(self, request, pk):
+        data = dict(request.data)
+        data["user"] = request.user.id
+        user = request.user.id
+        list = self.get_object(pk, user)
+        serializer = TodoItemSerializer(list, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, pk):
+        user = request.user.id
+        list = self.get_object(pk, user)
+        list.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ListItems(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, pk):
+        user = request.user.id
+        list = TodoItem.objects.filter(list=pk, user=user)
+        serializer = TodoItemSerializer(list, many=True)
+        return Response(serializer.data)
