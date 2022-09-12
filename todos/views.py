@@ -88,16 +88,6 @@ class MyPublic(APIView):
         serializer = TodoSerializer(pub_todo, many=True)
         return Response(serializer.data)
 
-
-class ItemListView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request):
-        user = request.user.id
-        todo_list = TodoItem.objects.filter(user=user)
-        serializer = TodoItemSerializer(todo_list, many=True)
-        return Response(serializer.data)
-
     def post(self, request):
         data = dict(request.data)
         data["user"] = request.user.id
@@ -126,8 +116,7 @@ class ItemDetail(APIView):
     def put(self, request, pk):
         data = dict(request.data)
         data["user"] = request.user.id
-        user = request.user.id
-        list = self.get_object(pk, user)
+        list = self.get_object(pk)
         serializer = TodoItemSerializer(list, data=data)
         if serializer.is_valid():
             serializer.save()
@@ -149,3 +138,14 @@ class ListItems(APIView):
         list = TodoItem.objects.filter(list=pk, user=user)
         serializer = TodoItemSerializer(list, many=True)
         return Response(serializer.data)
+
+    def post(self, request, pk):
+        data = dict(request.data)
+        data["list"] = pk
+        data["user"] = request.user.id
+        serializer = TodoItemSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
